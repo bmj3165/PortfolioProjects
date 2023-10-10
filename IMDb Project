@@ -1,0 +1,39 @@
+--Import data and change table name
+SELECT *
+FROM IMDBTop250MoviesCleanedversionIMDBTop250Movies;
+alter table IMDBTop250MoviesCleanedversionIMDBTop250Movies RENAME TO Movies;
+SELECT * FROM Movies;
+
+-- Top 5 movies with the highest budget
+SELECT name, budget FROM movies ORDER BY budget DESC LIMIT 5;
+
+UPDATE Movies set budget = REPLACE(budget, 2400000000, 235000000); 
+UPDATE Movies SET budget = REPLACE(budget, 550000000, 6700000);
+SELECT name, budget FROM Movies Order by DESC LIMIT 5;
+
+-- Top 5 highest-rated movies
+SELECT name, rating FROM Movies ORDER BY rating DESC LIMIT 5;
+
+-- Top 5 box office hits
+SELECT name, box_office FROM Movies GROUP BY name ORDER BY box_office DESC LIMIT 5;
+
+-- Top 10 Most Profitable movies
+SELECT name, budget, box_office, (box_office - budget) AS profit FROM Movies ORDER BY profit DESC LIMIT 10;
+
+-- Most Popular genres
+SELECT genre, COUNT(*) AS genre_count
+FROM (
+  SELECT TRIM(value) AS genre
+  FROM Movies
+  CROSS JOIN json_each('["' || REPLACE(genre, ',', '","') || '"]')
+)
+GROUP BY genre
+ORDER BY genre_count DESC
+LIMIT 5
+
+--Top 10 directors with the most movies
+
+SELECT directors, COUNT(*) as Number_of_movies 
+FROM Movies 
+GROUP BY directors 
+ORDER BY COUNT(*) DESC LIMIT 10;
